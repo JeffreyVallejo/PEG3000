@@ -1,0 +1,206 @@
+openapi: "3.0.2"
+info:
+  title: PEG 3000
+  description: |
+    PEG 3000 is a program designed to help your Pokemon gaming experience by managing location encounters, user details, pokemon, and fainted pokemon.
+    This API will allow you to interact with the PEG3000.
+  version: "1.0"
+servers:
+  - url: https://api.server.test/v1
+paths:
+  /Encounter:
+    get:
+      tags:
+        - Get Encounter
+      summary: Get an Encounter based on the given location.
+      description: |
+        Get a random Pokemon encounter based on the location.
+        
+        This will allow you to get a Pokemon encounter based on the given location.
+        The Response will return details about the Pokemon that was selected for you.
+      parameters:
+        - $ref: '#/components/parameters/GetEncounterParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetEncounterResponse'
+        400:
+          description: Poorly formed data.
+        404:
+          description: Page not found.
+        500:
+          description: Internal Server Error.
+  /user/{id}:
+    get:
+      tags:
+        - Get User Details
+      summary: Get the details of the user from a given ID.
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserIdResponse'
+        400:
+          description: Could not find the User by given ID.
+        404:
+          description: Page not found.
+        500:
+          description: Internal Server Error.
+    post:
+      tags:
+        - Create User
+      summary: Create a new user
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserResponse'
+        400:
+          description: Poorly formed data.
+        404:
+          description: Page not found.
+        500:
+          description: Internal Server Error.
+    delete:
+      tags:
+        - Delete User
+      summary: Delete User by ID
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        200:
+          description: OK
+        400:
+          description: Poorly formed data.
+        404:
+          description: Page not found.
+        500:
+          description: Internal Server Error.
+  /pokemonList/{id}:
+    get:
+      tags:
+        - Get Pokemon List
+      summary: Given a user id get the pokemon list associated.
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPokemonListResponse'
+        400:
+          description: Could not find the user with the given ID.
+        404:
+          description: Page not found.
+        500:
+          description: Internal Server Error.
+  /pokemonList:
+    put:
+      tags:
+        - Update Pokemon List
+      summary: Update the pokemon list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PokemonListUpdateResponse'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPokemonListResponse'
+        400:
+          description: Poorly formed data.
+        404:
+          description: Pokemon not found.
+        500:
+          description: Internal Server Error.
+components:
+  schemas:
+    GetEncounterResponse:
+      type: object
+      properties:
+        pokemonName:
+          type: string
+          description: Name of the Pokemon user must encounter.
+          example: Charmander
+        location:
+          type: string
+          description: The region where the Pokemon will be encountered.
+          example: East Province Area One
+    GetUserIdResponse:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Name of the user.
+          example: "SkrubShake"
+        pokemon:
+          type: array
+          items:
+            type: string
+            example:
+              - name: Charmander
+              - name: Pikachu
+              - name: Chimchar
+    CreateUserResponse:
+      type: object
+      properties:
+        userName:
+          type: string
+          description: Name of the user.
+          example: John Smith
+    GetPokemonListResponse:
+      type: array
+      items:
+        type: string
+        example:
+          - name: Charmander
+          - name: Pikachu
+          - name: Chimchar
+    PokemonListUpdateResponse:
+      type: object
+      properties:
+        pokemonName:
+          type: string
+          description: Name of the pokemon
+          example: Charmander
+  parameters:
+    GetEncounterParam:
+      name: location
+      in: query
+      description: The location of where the Pokemon encounter is.
+      required: true
+      schema:
+        type: string
+    UserIdParam:
+      name: id
+      in: path
+      description: The user Id
+      required: true
+      schema:
+        type: string
+        example: User Id
+    UserId:
+      name: userId
+      in: query
+      description: Gets a user associated to the username given.
+      required: true
+      schema:
+        type: string
